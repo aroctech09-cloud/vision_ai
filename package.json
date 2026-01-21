@@ -1,9 +1,13 @@
 {
+      "homepage": "https://aroctech09-cloud.github.io/vision_ai",
+      "name": "vision-ai",
       "scripts": {
             "start": "react-scripts start",
             "build": "react-scripts build",
             "test": "react-scripts test",
-            "eject": "react-scripts eject"
+            "eject": "react-scripts eject",
+            "predeploy": "npm run build",
+            "deploy": "gh-pages -d build"
       },
       "dependencies": {
             "@supabase/supabase-js": "^2.76.1",
