@@ -1,0 +1,21 @@
+# Node
+node_modules/
+npm-debug.log
+.env
+
+# Build
+dist/
+build/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Local Netlify folder
+.netlify
+
+.vercel
