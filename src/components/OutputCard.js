@@ -83,14 +83,14 @@ const OutputCard = ({ data, currentLang, compact = false }) => {
 
   const [copiedStatus, setCopiedStatus] = React.useState(null);
   const [expanded, setExpanded] = React.useState(false);
+  const [area, setArea] = useState("");
+  
+  // --- NUEVO ESTADO PARA TÉRMINOS ---
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const title = data.title || "";
   const description = data.description || "";
   const benefits = data.benefits || [];
-
-  const [developerName, setDeveloperName] = useState("");
-  const [employeeNumber, setEmployeeNumber] = useState("");
-  const [area, setArea] = useState("");
 
   const isViable =
     title.toUpperCase().includes("-V") &&
@@ -126,13 +126,8 @@ const OutputCard = ({ data, currentLang, compact = false }) => {
     .map((b, i) => `${i + 1}. ${b}`)
     .join("\n");
 
-// ==========================================================
-  // FUNCIÓN PARA ENVIAR AL FORMULARIO PHP (AUTO-RELLENADO)
-  // ==========================================================
   const handleSendToPHP = () => {
-    // Usamos window.USER_SESSION para acceder a la variable global de dashboard.php
     const session = window.USER_SESSION || { nombre: "Sin Nombre", numEmpleado: "00000" };
-    
     const complexityMap = { "Nivel 1": "B", "Nivel 2": "M", "Nivel 3": "A" };
     
     const form = document.createElement("form");
@@ -140,10 +135,8 @@ const OutputCard = ({ data, currentLang, compact = false }) => {
     form.action = "http://localhost/vision_ai/vision_ai_home.php"; 
 
     const fields = {
-      // Datos automáticos obtenidos de la sesión
       txtdesarrollador: session.nombre, 
       txtno_empleado: session.numEmpleado,
-      
       cboarea: area, 
       texto_idea: data.originalIdea || "", 
       txt_titulo: title,
@@ -165,7 +158,6 @@ const OutputCard = ({ data, currentLang, compact = false }) => {
     form.submit();
   };
 
-  // VISTA COMPACTA
   if (compact && !expanded) {
     return (
       <motion.div
@@ -195,7 +187,6 @@ const OutputCard = ({ data, currentLang, compact = false }) => {
     );
   }
 
-  // VISTA EXPANDIDA
   return (
     <motion.div
       className="bg-white p-6 rounded-2xl shadow-2xl space-y-6 border-t-8 border-yellow-500"
@@ -255,14 +246,12 @@ const OutputCard = ({ data, currentLang, compact = false }) => {
           <div className="border-t pt-6">
             <h3 className="text-sm font-medium uppercase text-gray-500 mb-3">{texts.devInfo}</h3>
             <div className="space-y-4">
-              
-              {/* Solo dejamos el Selector de Área, el nombre e ID se quitan porque son automáticos */}
               <div>
                 <label className="text-xs text-gray-600">{texts.area}</label>
                 <select
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
-                  className="w-full mt-1 p-2 border rounded-lg text-sm bg-white"
+                  className="w-full mt-1 p-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="">Selecciona un área de destino</option>
                   {Object.keys(AREA_EMAILS).map((a) => (
@@ -273,22 +262,48 @@ const OutputCard = ({ data, currentLang, compact = false }) => {
             </div>
           </div>
 
-          <div className="border-t pt-6">
+          {/* --- SECCIÓN DE TÉRMINOS Y CONDICIONES --- */}
+          <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-1 w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              />
+              <span className="text-xs text-gray-600 leading-tight">
+                Acepto que mi idea sea procesada por modelos de IA y confirmo que he leído los 
+                <a href="http://localhost/vision_ai/terminos.php" target="_blank" className="text-blue-600 font-bold ml-1 hover:underline">
+                   Términos y Condiciones Industriales.
+                </a>
+              </span>
+            </label>
+          </div>
+
+          <div className="border-t pt-4">
             <button
               onClick={handleSendToPHP}
-              className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 
-              text-white font-semibold py-3 rounded-xl shadow-md transition-all"
+              disabled={!acceptedTerms || !area}
+              className={`w-full flex items-center justify-center font-semibold py-3 rounded-xl shadow-md transition-all ${
+                acceptedTerms && area 
+                ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" 
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
             >
               <Mail className="w-5 h-5 mr-2" />
               Validar y Enviar a Revisión
             </button>
+            
+            {!acceptedTerms && (
+              <p className="text-[10px] text-center text-red-400 mt-2 italic">
+                * Debes aceptar los términos para habilitar el envío.
+              </p>
+            )}
           </div>
         </>
       )}
     </motion.div>
   );
-
-  
 };
 
 export default OutputCard;
