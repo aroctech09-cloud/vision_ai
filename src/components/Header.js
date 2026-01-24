@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { History, Globe, ChevronDown, Check } from 'lucide-react';
+import { Globe, ChevronDown, Check, LogOut } from 'lucide-react'; // Cambiamos History por LogOut
 
 const LANGUAGES = [
   { code: 'es', display: 'ES', name: 'Español', tooltip: 'Cambiar a Español' },
@@ -9,7 +9,7 @@ const LANGUAGES = [
   { code: 'pt', display: 'PT', name: 'Português', tooltip: 'Mudar para Português' },
 ];
 
-const Header = ({ onToggleHistory, currentLang, setLanguage, historyTooltip }) => {
+const Header = ({ currentLang, setLanguage, onLogout }) => { // Eliminamos onToggleHistory y historyTooltip
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const currentLangInfo = LANGUAGES.find(lang => lang.code === currentLang) || LANGUAGES[0];
@@ -29,11 +29,10 @@ const Header = ({ onToggleHistory, currentLang, setLanguage, historyTooltip }) =
     >
       {/* SECCIÓN DEL LOGO Y TÍTULO */}
       <div className="flex items-center space-x-3">
-        {/* Logo imponente */}
         <motion.img 
-          src="/Logo_Vision.png" // Asegúrate de que el nombre coincida con tu archivo en 'public'
+          src="/Logo_Vision.png" 
           alt="Vision AI Logo"
-          className="w-12 h-12 object-contain" // Tamaño ajustable
+          className="w-12 h-12 object-contain"
           whileHover={{ rotate: 5, scale: 1.1 }}
         />
         <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-yellow-500 bg-clip-text text-transparent">
@@ -41,8 +40,8 @@ const Header = ({ onToggleHistory, currentLang, setLanguage, historyTooltip }) =
         </h1>
       </div>
       
-      {/* Contenedor para agrupar los botones */}
-      <div className="flex space-x-4"> 
+      {/* Contenedor de Acciones */}
+      <div className="flex items-center space-x-4"> 
         {/* Selector de Idioma */}
         <div className="relative">
             <motion.button
@@ -50,7 +49,6 @@ const Header = ({ onToggleHistory, currentLang, setLanguage, historyTooltip }) =
                 className="p-3 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors shadow-md flex items-center group"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                aria-label={langTooltip}
                 title={langTooltip}
             >
                 <Globe className="w-6 h-6 mr-1" />
@@ -65,7 +63,6 @@ const Header = ({ onToggleHistory, currentLang, setLanguage, historyTooltip }) =
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
                     >
                         {LANGUAGES.map((lang) => (
                             <button
@@ -86,16 +83,15 @@ const Header = ({ onToggleHistory, currentLang, setLanguage, historyTooltip }) =
             </AnimatePresence>
         </div>
 
-        {/* Botón Historial */}
+        {/* BOTÓN CERRAR SESIÓN (Reemplaza al Historial) */}
         <motion.button
-          onClick={onToggleHistory}
-          className="p-3 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors shadow-md"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          aria-label={historyTooltip}
-          title={historyTooltip}
-        >
-          <History className="w-6 h-6" />
+          onClick={() => window.location.href = 'http://localhost/vision_ai/dashboard.php'} // Te saca de React y te lleva al PHP
+    className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md"
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    title="Ir al Dashboard Principal"
+  >
+          <LogOut className="w-6 h-6" />
         </motion.button>
       </div>
     </motion.div>
